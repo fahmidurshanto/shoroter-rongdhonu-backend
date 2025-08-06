@@ -17,6 +17,12 @@ connection.once('open', () => {
   console.log("MongoDB database connection established successfully");
 })
 
+const authRouter = require('./routes/auth');
+const postsRouter = require('./routes/posts');
+
+app.use('/auth', authRouter);
+app.use('/posts', postsRouter);
+
 app.get('/', (req, res) => {
     res.send('Shoroter Rongdhonu Backend is running!');
 });
