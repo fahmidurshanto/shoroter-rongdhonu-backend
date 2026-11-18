@@ -1,0 +1,163 @@
+{
+  "info": {
+    "name": "Shoroter Rongdhonu Backend",
+    "description": "Auto-generated from routes/auth.js, routes/posts.js, models/*.js. Base URL: http://localhost:5000",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000", "type": "string" },
+    { "key": "token", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"secret123\"\n}"
+            },
+            "description": "Register a new user. Returns a JWT in { token }."
+          },
+          "event": [
+            { "listen": "test", "script": { "exec": [ "var d = pm.response.json(); if (d.token) pm.collectionVariables.set('token', d.token);" ] } }
+          ]
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"secret123\"\n}"
+            },
+            "description": "Login. Returns a JWT in { token }."
+          },
+          "event": [
+            { "listen": "test", "script": { "exec": [ "var d = pm.response.json(); if (d.token) pm.collectionVariables.set('token', d.token);" ] } }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Posts",
+      "item": [
+        {
+          "name": "Get all posts (search/filter/paginate)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/posts?search=&tag=&page=1&limit=10",
+              "host": ["{{baseUrl}}"], "path": ["posts"],
+              "query": [
+                { "key": "search", "value": "" },
+                { "key": "tag", "value": "" },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            },
+            "description": "Public. Query: search (regex on title/content), tag, page, limit. Returns { posts, totalPosts, currentPage, totalPages }."
+          }
+        },
+        {
+          "name": "Get single post by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/posts/:id", "host": ["{{baseUrl}}"], "path": ["posts", ":id"] },
+            "description": "Public. Returns the post object (or null if not found)."
+          }
+        },
+        {
+          "name": "Add post",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-auth-token", "value": "{{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/posts/add", "host": ["{{baseUrl}}"], "path": ["posts", "add"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"My First Post\",\n  \"content\": \"Hello world\",\n  \"featuredImage\": \"https://example.com/img.jpg\",\n  \"tags\": [\"news\", \"tech\"],\n  \"isDraft\": false\n}"
+            },
+            "description": "Protected (x-auth-token). Creates a post. publishedAt auto-set when isDraft=false."
+          }
+        },
+        {
+          "name": "Update post",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-auth-token", "value": "{{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/posts/update/:id", "host": ["{{baseUrl}}"], "path": ["posts", "update", ":id"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Title\",\n  \"content\": \"Updated content\",\n  \"featuredImage\": \"https://example.com/img2.jpg\",\n  \"tags\": [\"edited\"],\n  \"isDraft\": false\n}"
+            },
+            "description": "Protected (x-auth-token). Updates a post by id."
+          }
+        },
+        {
+          "name": "Delete post",
+          "request": {
+            "method": "DELETE",
+            "header": [ { "key": "x-auth-token", "value": "{{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/posts/delete/:id", "host": ["{{baseUrl}}"], "path": ["posts", "delete", ":id"] },
+            "description": "Protected (x-auth-token). Deletes a post by id."
+          }
+        },
+        {
+          "name": "Count - total",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "x-auth-token", "value": "{{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/posts/count/total", "host": ["{{baseUrl}}"], "path": ["posts", "count", "total"] },
+            "description": "Protected. Returns { count }."
+          }
+        },
+        {
+          "name": "Count - drafts",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "x-auth-token", "value": "{{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/posts/count/drafts", "host": ["{{baseUrl}}"], "path": ["posts", "count", "drafts"] },
+            "description": "Protected. Returns { count } of drafts (isDraft=true)."
+          }
+        },
+        {
+          "name": "Count - published",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "x-auth-token", "value": "{{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/posts/count/published", "host": ["{{baseUrl}}"], "path": ["posts", "count", "published"] },
+            "description": "Protected. Returns { count } of published (isDraft=false)."
+          }
+        },
+        {
+          "name": "Latest posts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/posts/latest?limit=3",
+              "host": ["{{baseUrl}}"], "path": ["posts", "latest"],
+              "query": [ { "key": "limit", "value": "3" } ]
+            },
+            "description": "Public. Returns latest published posts (default limit 3). NOTE: route is registered AFTER /:id so it is shadowed by GET /posts/:id — see notes."
+          }
+        }
+      ]
+    }
+  ]
+}
